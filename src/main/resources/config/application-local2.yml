@@ -1,0 +1,8 @@
+##############
+### local2
+### com.kt.icis.oder.* 패키지의 bean 로딩을 skip 하여 로컬 서버 기동 속도 향상
+### application.yml의 spring.profiles.active를 local2 로 변경하면 적용됨
+##############
+spring:
+  config:
+    import: application-local.yml

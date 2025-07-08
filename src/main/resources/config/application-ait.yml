@@ -1,0 +1,20 @@
+##############
+### ait
+##############
+spring:
+  datasource:
+    driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+          
+cmmnfwrk:          
+  field:
+    filtering:
+      mode: none #none : 필드필터링안함, local: 하단 fields에 정의된 값 기준으로 필드필터링, meta: meta db 값 기준 필드필터링
+
+# app
+app-info:
+  title: "[AIT] 기준정보 데몬"
+
+oder:
+  common:
+    kafka:
+      env-suffix: "-ait"  

@@ -1,0 +1,293 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /baseinfo-daemon
+
+mybatis:
+  configuration:
+    jdbc-type-for-null: "NULL"
+    map-underscore-to-camel-case: true
+        
+spring:
+  profiles:
+    active: local 
+  application:
+    name: icis-oder-baseinfo-daemon
+  banner:
+    location: "classpath:config/app-banner.dat"
+  main:
+    allow-bean-definition-overriding: true   
+  mvc.throw-exception-if-no-handler-found: true
+  web.resources.add-mappings: false
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true 
+      client:
+        config:
+          default:
+            connectTimeout: 3000  # feign의 전역 timeout 설정 : 20초
+            readTimeout: ${FEIGN_TIMEOUT:30000} # feign timeout configmap 주입 
+       
+# Database            
+  datasource:
+    driverClassName: com.tmax.tibero.jdbc.TbDriver
+    url: "${DB_URL}"
+    username: "ENC(${DB_USERNAME})"
+    password: "ENC(${DB_PASSWORD})"
+    hikari:
+      pool-name: hikari-cp
+      maximum-pool-size: "${MAXIMUM-POOL-SIZE:10}"
+      minimum-idle: "${MINIMUM-IDLE:10}" 
+      connectionTimeout: "${HIKARI_CONNECTION_TIMEOUT:10000}"
+      data-source-properties:
+        login_timeout: "${HIKARI_LOGIN_TIMEOUT:10000}"  # Connect Timeout
+        read_timeout: "${HIKARI_READ_TIMEOUT:30000}"   # Read Timeout  
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 8 # pool에 할당할수 있는 커넥션 최대수(default:8)
+          max-idle: 8 # pool의 idle 커넥션 최대수(default:8)
+          min-idle: 2 # pool의 idle 커넥션 최소수(default:0)
+      host: "${REDIS_SERVER}"
+      port: "${REDIS_PORT}"
+      username: "ENC(${REDIS_USERNAME})"
+      password: "ENC(${REDIS_PASSWORD})"
+      timeout: 1000  # 커넥션 타임아웃 (단위: 밀리세컨드 )    
+      mode: "${REDIS_MODE:standalone}" #mode 값 없을 경우 디폴트 "standalone"
+      command_timeout: 5000 #mode가 cluster일 경우 Command Timeout 설정(ms),  디폴트 150ms
+      connect_timeout: 3000 #mode가 cluster일 경우 Connnect Timeout 설정(ms),  디폴트  100ms
+      enable_periodic_refresh: 30000 #mode가 cluster일 경우 Enable Periodic Refresh 설정(ms),  디폴트 30000ms
+
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVER}
+    properties:
+      sasl:
+        jaas:
+          config: "ENC(${KAFKA_CONFIG})"
+        mechanism: SCRAM-SHA-512
+      security:
+        protocol: SASL_SSL    
+      ssl:
+        endpoint:
+          identification:
+            algorithm: ""          
+    ssl:
+      trust-store-location: classpath:/truststore.jks
+      trust-store-type: PKCS12
+      trust-store-password: ENC(${KAFKA_TRUSTSTORE_PASSWORD})
+    listener:
+      ack-mode: MANUAL_IMMEDIATE
+    consumer:
+      group-id: icis-oder-baseinfo-daemon
+    producer:
+      retries: 1
+      properties:
+        max.block.ms: 3000
+
+jasypt:
+  encryptor:
+    password: "${JASYPT_ENCYPTOR_PASSWORD}"
+    bean: jasyptStringEncryptor
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+    
+logging:
+  config: /app/conf/log4j2-elastic.xml
+  
+resilience4j:
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: ${DEFAULT_TIMEOUT:60000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+  health:
+    redis:
+      enabled: false
+    consul:
+      enabled: false
+    discoveryComposite:
+      enabled: false
+    diskSpace:
+      enabled: false
+                
+# app       
+app-info:
+  app-type: online
+  app-name: ${APP_NM:NBSS_TORD} #공통 ConfigMap에서 관리
+  host-id: ${HOST_ID:ICS_TR_01} #공통 ConfigMap에서 관리, 로컬환경 "ICS_TR_01"로 설정 
+  log-point: ${LOG_POINT:TO}
+  chnl-type: "TO"
+  user-id: "91337909" #ICISTR-Order
+  org-id: "SPT8050"
+  title: "기준정보 데몬"
+  desc: "기준정보 데몬 MS입니다."
+  redis:
+    flag: true
+    mode: ${REDIS_MODE:standalone}
+
+#환경별로 달라지는 정보  
+  node-ip:  ${NODE_IP}
+  pod-ip: ${POD_IP}
+  pod-name:  ${POD_NAME}
+  node-name: ${NODE_NAME}
+
+cmmnfwrk:
+  env:
+    type: "${CMMN_ENV_TYPE:default}"
+  feign:
+    flag: true
+  aplock:
+    flag: true #aplock 활성
+  redis:
+    flag: true
+    mode: ${REDIS_MODE:standalone}
+    command_timeout: 5000 #mode가 cluster일 경우 Command Timeout 설정(ms), defalut 150ms
+    connect_timeout: 3000 #mode가 cluster일 경우 Connnect Timeout 설정(ms), defalut 100ms
+    enable_periodic_refresh: 30000 #mode가 cluster일 경우 Enable Periodic Refresh 설정(ms),  디폴트 30000ms
+    host: "${CMMN_REDIS_SERVER}"
+    port: "${CMMN_REDIS_PORT}"
+    username: "ENC(${CMMN_REDIS_USERNAME})"
+    password: "ENC(${CMMN_REDIS_PASSWORD})"
+    hit:
+      flag: true #Redis Hit 측정 활성화 여부, default : true
+      ttl: 25 #Hit 측정용 Key TTL, default : 25 Hour    
+  api:
+    devpilot-agent:
+      url: ${DEVPILOT_AGENT_URL}
+    meta-mgr:
+      url: ${META_MGR_URL}
+    asyncgw:
+      url: ${CMMN_ASYNCGW_URL}
+    itggw:
+      cris:
+        url: ${CMMN_CRIS_URL}
+      push:
+        url: ${CMMN_PUSH_URL}
+      aplock:
+        url: ${CMMN_APLOCK_URL}
+      dynamic:
+        url: ${CMMN_DYNAMIC_URL}
+    lt-itggw:      
+      dynamic:
+        url: ${CMMN_LT_DYNAMIC_URL}
+  field:
+    filtering:
+      mode: meta #none : 필드필터링안함, local: 하단 fields에 정의된 값 기준으로 필드필터링, meta: meta db 값 기준 필드필터링
+      fields: mkerNm #apyr,saler
+      type: DE   # NA (Not Applicable), DE (Delete), MV (Masking Value)
+    encrypt:
+      mode: meta #none : 필드암호화 안함, local: 하단 fields에 정의된 값 기준으로 필드암호화, meta: meta db 값 기준 필드암호화
+      fields: "svcNo,cardNo,bcbnConn,rack"
+      key: "ENC(${ENC_KEY})"
+  safeDB:
+    mode: dev #local : safeDB 암호화 안함, dev : safeDB 암호화 진행
+  logging:
+    level: info   # trace, debug, info, warn, error
+    show: true
+    masking: ${CMMN_LOGGING_MASK:true}
+  bmon:
+    send:
+      flag: ${CMMN_SEND_BMON:true}
+  mon:
+    send:
+      flag: ${CMMN_MON_SEND:false}
+    cmmn:
+      flag: ${CMMN_MON_CMMN:false}
+
+api:
+  baseinfo:
+    url: "${ODER_BASEINFO_URL}"
+  wrlincomn:
+    url: "${ODER_WRLINCOMN_URL}"
+  ppon:
+    url: "${ODER_PPON_URL}"
+  infocomm:
+    url: "${ODER_INFOCOMM_URL}"
+  entprinet:
+    url: "${ODER_ENTPRINET_URL}"
+  inetaplca:
+    url: "${ODER_INETAPLCA_URL}"
+  intelnet:
+    url: "${ODER_INTELNET_URL}"
+  etcterr:
+    url: "${ODER_ETCTERR_URL}"
+  baseinfo-daemon:
+    url: "${ODER_BASEINFO_DAEMON_URL}"
+  wrlincomn-daemon:
+    url: "${ODER_WRLINCOMN_DAEMON_URL}"
+  ppon-daemon:
+    url: "${ODER_PPON_DAEMON_URL}"
+  infocomm-daemon:
+    url: "${ODER_INFOCOMM_DAEMON_URL}"
+  entprinet-daemon:
+    url: "${ODER_ENTPRINET_DAEMON_URL}"
+  inetaplca-daemon:
+    url: "${ODER_INETAPLCA_DAEMON_URL}"
+  intelnet-daemon:
+    url: "${ODER_INTELNET_DAEMON_URL}"
+  etcterr-daemon:
+    url: "${ODER_ETCTERR_DAEMON_URL}"  
+  bill:
+    url: "${API_BILL_URL}"
+
+oder:
+  common:
+    crypt:
+      keyofkey: "F^ICISGRPSEC0802"
+      padding: "NoPadding"
+      mode: "ECB"
+      algorithm: "AES"
+      keylength: 128
+    redis:
+      flag: ${ODER_REDIS_FLAG:true}
+    kafka:
+      env-suffix: ""
+      sendMsgLimitSize: ${KAFKA_SENDMSG_LIMIT_SIZE:4500000}
+    rowdata:
+      kafka:
+        flag: ${ROWDATA_KAFKA_FLAG:false}
+      method-info:
+        flag: ${ROWDATA_METHOD_INFO_FLAG:false}
+      jsonLen:
+        flag: ${ROWDATA_JSONLEN_FLAG:false}
+    itg:
+      appname:
+        chk: ${ITG_APPNAME_CHK:false}
+      b2c:
+        org-id: "${ITG_B2C_ORG_ID:SPT8050}"
+        user-id: "${ITG_B2C_USER_ID:82023154}"
+  project-code: bi
+  volume:
+    path: "${VOLUME_PATH:/app/order/ftp}"
+  volume-ap:
+    path: "${VOLUME_AP_PATH:/app/order/ap}"
+  volume-ftp:
+    path: "${VOLUME_FTP_PATH:/app/order/ftp}"
+  conncheck:
+    cris:
+      authsocialno1: "ENC(${CRIS_CONNCHECK_AUTHSOCIALNO1:})"
+      issuesocialno1: "ENC(${CRIS_CONNCHECK_ISSUESOCIALNO1:})" 
+      authsocialno2: "ENC(${CRIS_CONNCHECK_AUTHSOCIALNO2:})" 
+      issuesocialno2: "ENC(${CRIS_CONNCHECK_ISSUESOCIALNO2:})" 
+      authpassport1: "ENC(${CRIS_CONNCHECK_AUTHPASSPORT1:})" 
+      issuepassport1: "ENC(${CRIS_CONNCHECK_ISSUEPASSPORT1:})" 
+      authpassport2: "ENC(${CRIS_CONNCHECK_AUTHPASSPORT2:})" 
+      issuepassport2: "ENC(${CRIS_CONNCHECK_ISSUEPASSPORT2:})" 
+      authfinanceno1: "ENC(${CRIS_CONNCHECK_AUTHFINANCENO1:})" 
+      issuefinanceno1: "ENC(${CRIS_CONNCHECK_ISSUEFINANCENO1:})" 
+      authfinanceno2: "ENC(${CRIS_CONNCHECK_AUTHFINANCENO2:})" 
+      issuefinanceno2: "ENC(${CRIS_CONNCHECK_ISSUEFINANCENO2:})"    
+feign:
+  flag: true

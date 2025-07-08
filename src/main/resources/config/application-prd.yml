@@ -1,0 +1,12 @@
+##############
+### prd
+##############
+cmmnfwrk:
+  logging:
+    level: warn   # trace, debug, info, warn, error
+    show: true
+
+
+# app
+app-info:
+  title: "[PRD] 기준정보 데몬"
