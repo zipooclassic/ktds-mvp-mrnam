@@ -1,6 +1,6 @@
 # ktds-mvp-mrnam
 
-![image.png](~@source/.static/images/image.png)
+![image.png](static/images/image.png)
 
 ## 프로젝트 제목
 
