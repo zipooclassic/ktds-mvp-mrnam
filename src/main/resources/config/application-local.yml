@@ -1,0 +1,178 @@
+##############
+### local
+##############
+server:
+  port: 18188
+  tomcat:
+    url-encoding: UTF-8
+spring:
+# Database            
+  datasource:
+    driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:tibero:thin:@10.217.139.11:8640:DEVIORD
+    username: LENC@[IDkGfwouGXo2r89UUDIYMZgzkyAOuPGM]
+    password: LENC@[E8Mh+QgGoA+AiER93EJymB1yfbJqwu9w]
+    
+  data:        
+    redis:
+      host: 10.217.139.76
+      port: 30876
+      username: LENC@[KixiuO5h1PtUwJovlxUR2Q==]
+      password: LENC@[a2jSwigb3NLMVt5VM0XqoMXJNNvc/BvA]
+      
+  kafka:
+    bootstrap-servers: sa-cluster-kafka-0.dev.icis.kt.co.kr:443,sa-cluster-kafka-1.dev.icis.kt.co.kr:443,sa-cluster-kafka-2.dev.icis.kt.co.kr:443
+    properties:
+      sasl:
+        jaas:
+          config: LENC@[GaVN70fbz+lnUwVvC3VS4giil18271t1HAHGDVHbIWrJOgv+0zrv6WKnqU6/Gi/6gIBKvC9S/1aI/WZT6nvvyBOIxvsPdxWpdkgIBsxWJKRieOb71RfQE8EanSt6GsnPgfL3wLALJqxZm/E6Y8n8+pOnVCoK3KOW]          
+    ssl:
+      trust-store-password: LENC@[k9E7quXdHafDsY26KRJPgfoZYAscpkH9]
+
+# logging
+logging:
+  config: classpath:log4j2-elastic.xml
+  
+# app
+app-info:
+  node-ip: "192.168.0.1"
+  pod-ip: "192.168.0.1"
+  pod-name: "test"
+  title: "[LOCAL] 기준정보 데몬"
+  app-name: "NBSS_TORD"
+  host-id: "ICS_TR_01"
+  node-name: "LOCAL"
+  
+cmmnfwrk:
+  redis:
+    mode: standalone
+    host: 10.217.139.76
+    port: 30876        
+    username: LENC@[IPrE70EyWPSghfH/5qMC0w==]
+    password: LENC@[WoPycJxko6pkZW9aYLdQCmBxi6IY4rf7] 
+  api:
+    devpilot-agent:
+      url: http://icis-cmmn-devpilotagent.dev.icis.kt.co.kr/devpilot-agent
+    meta-mgr:
+      url: http://icis-cmmn-metamgr.dev.icis.kt.co.kr/meta-mgr
+    asyncgw:
+      url: http://async-gw-order.dev.icis.kt.co.kr
+    itggw:
+      cris:
+        url: http://cmmn-gw-order.dev.icis.kt.co.kr/itggw
+      push:
+        url: http://cmmn-gw-order.dev.icis.kt.co.kr/itggw
+      aplock:
+        url: http://cmmn-gw-order.dev.icis.kt.co.kr/itggw
+      dynamic:
+        url: http://cmmn-gw-order.dev.icis.kt.co.kr/itggw        
+    lt-itggw:      
+      dynamic:
+        url: http://cmmn-gw-order-lt.dev.icis.kt.co.kr/itggw 
+  field:
+    filtering:
+      mode: none #none : 필드필터링안함, local: 하단 fields에 정의된 값 기준으로 필드필터링, meta: meta db 값 기준 필드필터링
+      fields: mkerNm #apyr,saler
+      type: DE   # NA (Not Applicable), DE (Delete), MV (Masking Value)
+    encrypt:
+      mode: meta #none : 필드암호화 안함, local: 하단 fields에 정의된 값 기준으로 필드암호화, meta: meta db 값 기준 필드암호화
+      fields: svcNo,cardNo,bcbnConn,rack
+# ESB DEV key a52~, ESB UT key f75~
+# Local Nexacro에서 Local MS로 ESB UT를 사용하는 경우 DEV MS와 Openfeign 불가, Openfeign MS도 Local 기동하며 Local에 기동된 모든 MS의 key는 f75~ 변경필요
+      key: LENC@[ZeFVsSCqqnJf1WN5QugFQg+z1vf9AC2KbS27tXyWAujg4tEpPC3Je8XSXxWSGik2B1nyx7UbLt+PN3eW8FSTx2RJ6W0B00rIjL5QWi+HbzJwB5xIx6HB9XyGiOHMUgmLiad96KS2vfKwdGmEQWMsiA7n0YFSN3E5RRbPfpN9EPSU1GcBHarG/pRjDvkuxWEF/FBFg55zekFYbj/44STR8bpeMYOqpQfFrsLQd+I4fIH8HUMXFpN9xHoHSwU9EhEkbJSzbB47oIUrJGgQBrY7gcZ8+4LlFphw8lwF9Y+ZT4g3J5xTET1Qq/gQcxMi2vgrfRYVcgumDQdA9cEF75rQKgQ2sh6VLI9rwvxG6uf+DCg=]
+#      key: LENC@[Hv0+gIyiNDowVw6oaQOfhSMM6cv3NSPZcWt6iAZ4L627tsgFzP5/5pj1tIf8c1Xqu0SM1wprQdA8eAxVWwSJVPnyF+0sjxf+IwMO1ElTBOn9bu/LfMR98zIz9ODZsG0xB3eVGkaRLgdAS0Aqd9+SRjMIwyo0YQPaloVtONvizVPBmPmg9CQrZ2IJGqWTBKBG8wCm2rAu0jZkFthg2al/VIcI64tSI6x/4iFI39TJHvJ/prN4hdPiHCJ8aAxnb7Wo8NvcsEGaBQ76my/2l5dj3XOv4My7Z1LiNAqMgxYlSMNxPoUmGG+R6fTBeV52p9trWWHbPFv6DsOvBpvOXxYH8JGCy0lyokKjaQjmyNM7m9o=]
+  safeDB:
+    mode: dev #local : safeDB 암호화 안함, dev : safeDB 암호화 진행
+  logging:
+    level: debug    # trace, debug, info, warn, error
+    show: true
+  bmon:
+    send:
+      flag: false  
+# Curl/Postman 등 테스트 호출 시 Response Debug용 공통헤더 출력시, 아래 설정을 추가      
+#  debug:
+#    header: "show"
+      
+# jasypt      
+jasypt:
+  encryptor:
+    password: new1234!
+    bean: jasyptStringEncryptor
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator            
+    property:
+      prefix: "LENC@["
+      suffix: "]"    
+
+# Openfeign, 기본설정은 dev환경에 기동환 ms 호출, local ms간 Openfeign을 호출하고자 한다면 localhost url을 주석해지하고 http://icis-oder-~ 를 주석처리하고 진행
+api:
+  baseinfo:
+    url: http://icis-oder-baseinfo.t-order.svc/baseinfo
+    #url: http://localhost:8188/baseinfo
+  wrlincomn:
+    url: http://icis-oder-wrlincomn.t-order.svc/wrlincomn
+    #url: http://localhost:8288/wrlincomn
+  ppon:
+    url: http://icis-oder-ppon.t-order.svc/ppon
+    #url: http://localhost:8388/ppon
+  infocomm:
+    url: http://icis-oder-infocomm.t-order.svc/infocomm
+    #url: http://localhost:8488/infocomm   
+  entprinet:
+    url: http://icis-oder-entprinet.t-order.svc/entprinet
+    #url: http://localhost:8588/entprinet
+  inetaplca:
+    url: http://icis-oder-inetaplca.t-order.svc/inetaplca
+    #url: http://localhost:8688/inetaplca
+  intelnet:
+    url: http://icis-oder-intelnet.t-order.svc/intelnet
+    #url: http://localhost:8788/intelnet
+  etcterr:
+    url: http://icis-oder-etcterr.t-order.svc/etcterr
+    #url: http://localhost:8888/etcterr
+  baseinfo-daemon:
+    url: http://icis-oder-baseinfo-daemon.t-order.svc/baseinfo-daemon
+    #url: http://localhost:18188/baseinfo-daemon
+  wrlincomn-daemon:
+    url: http://icis-oder-wrlincomn-daemon.t-order.svc/wrlincomn-daemon
+    #url: http://localhost:18288/wrlincomn-daemon
+  ppon-daemon:
+    url: http://icis-oder-ppon-daemon.t-order.svc/ppon-daemon
+    #url: http://localhost:18388/ppon-daemon
+  infocomm-daemon:
+    url: http://icis-oder-infocomm-daemon.t-order.svc/infocomm-daemon
+    #url: http://localhost:18488/infocomm-daemon
+  entprinet-daemon:
+    url: http://icis-oder-entprinet-daemon.t-order.svc/entprinet-daemon
+    #url: http://localhost:18588/entprinet-daemon
+  inetaplca-daemon:
+    url: http://icis-oder-inetaplca-daemon.t-order.svc/inetaplca-daemon
+    #url: http://localhost:18688/inetaplca-daemon
+  intelnet-daemon:
+    url: http://icis-oder-intelnet-daemon.t-order.svc/intelnet-daemon
+    #url: http://localhost:18788/intelnet-daemon
+  etcterr-daemon:
+    url: http://icis-oder-etcterr-daemon.t-order.svc/etcterr-daemon
+    #url: http://localhost:18888/etcterr-daemon    
+  bill:
+    url: http://rest-gw-bill.dev.icis.kt.co.kr
+  sample:
+    url: http://icis-oder-sample.t-order.svc/sample
+    #url: http://localhost:8088/sample
+
+#order config
+oder:
+  common:
+    rowdata:
+      kafka:
+        flag: true
+      method-info:
+        flag: true     
+      jsonLen:
+        flag: true
+  volume:
+    path: c:\app\order\ftp
+  volume-ap:
+    path: c:\app\order\ap
+  volume-ftp:
+    path: c:\app\order\ftp

@@ -356,5 +356,9 @@ def analyze():
         print(f"분석 중 오류 발생: {e}")
         return redirect(url_for('code_inspection'))
 
+@app.route('/health')
+def health_check():
+    return 'OK', 200
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)

@@ -1,7 +1,7 @@
 import os
 import re
 import shutil
-from dotenv import load_dotenv
+
 from git import Repo
 from openai import AzureOpenAI
 from azure.core.credentials import AzureKeyCredential
@@ -9,7 +9,11 @@ from azure.search.documents import SearchClient
 from azure.search.documents.models import VectorizedQuery
 import sqlite3
 
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    print("dotenv 모듈이 설치되지 않았습니다. os.environ을 사용하여 환경 변수를 설정하세요.")
 
 # --- 1. 설정 (Configuration) ---
 
@@ -18,14 +22,14 @@ REPO_URL = os.getenv("REPO_URL", "https://github.com/zipooclassic/ktds-mvp-mrnam
 LOCAL_REPO_PATH = os.getenv("LOCAL_REPO_PATH", "./cloned_repo/ktds-mvp-mrnam")
 
 # Azure AI Search (Vector DB) 정보
-SEARCH_ENDPOINT = os.getenv("SEARCH_ENDPOINT")
-SEARCH_KEY = os.getenv("SEARCH_KEY")
-INDEX_NAME = os.getenv("INDEX_NAME")  # Code Validator용 인덱스
+SEARCH_ENDPOINT = os.getenv("SEARCH_ENDPOINT", os.environ.get("SEARCH_ENDPOINT"))
+SEARCH_KEY = os.getenv("SEARCH_KEY",os.environ.get("SEARCH_KEY"))
+INDEX_NAME = os.getenv("INDEX_NAME",os.environ.get("INDEX_NAME"))  # Code Validator용 인덱스
 
 # Azure OpenAI (Generative AI) 정보
-AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
-AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY")
-AZURE_OPENAI_DEPLOYMENT = os.getenv("AZURE_OPENAI_DEPLOYMENT")
+AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT",os.environ.get("AZURE_OPENAI_ENDPOINT"))
+AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY", os.environ.get("AZURE_OPENAI_KEY"))
+AZURE_OPENAI_DEPLOYMENT = os.getenv("AZURE_OPENAI_DEPLOYMENT",os.environ.get("AZURE_OPENAI_DEPLOYMENT", "mrnam-text-embedding-3-small"))
 OPENAI_API_VERSION = os.getenv("OPENAI_API_VERSION", "2024-02-01")
 
 # 벡터 변환 모델 (Azure OpenAI 임베딩 사용)

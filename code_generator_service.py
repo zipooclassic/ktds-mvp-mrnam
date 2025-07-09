@@ -1,7 +1,8 @@
 import os
 import json
 from typing import List, Dict, Any, Optional
-from dotenv import load_dotenv
+
+
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.models import VectorizedQuery
@@ -12,8 +13,16 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# 환경 변수 로드
-load_dotenv()
+
+
+# 환경 변수 로드 (local에서는 .env 파일 사용, Azure에서는 환경 변수 설정)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()   
+except ImportError:
+    logger.warning("dotenv 모듈이 설치되지 않았습니다. os.environ을 사용하여 환경 변수를 설정하세요.")
+
+
 
 class CodeGeneratorService:
     """
@@ -23,15 +32,15 @@ class CodeGeneratorService:
     def __init__(self):
         """서비스 초기화 및 Azure 클라이언트 설정"""
         # Azure AI Search 설정
-        self.search_endpoint = os.getenv("SEARCH_ENDPOINT")
-        self.search_key = os.getenv("SEARCH_KEY") 
-        self.index_name = os.getenv("INDEX_NAME")
+        self.search_endpoint = os.getenv("SEARCH_ENDPOINT",os.environ.get("SEARCH_ENDPOINT"))
+        self.search_key = os.getenv("SEARCH_KEY", os.environ.get("SEARCH_KEY")) 
+        self.index_name = os.getenv("INDEX_NAME", os.environ.get("INDEX_NAME"))
         
         # Azure OpenAI 설정
-        self.azure_openai_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
-        self.azure_openai_key = os.getenv("AZURE_OPENAI_KEY")
-        self.azure_openai_deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")
-        self.openai_api_version = os.getenv("OPENAI_API_VERSION", "2025-01-01-preview")
+        self.azure_openai_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", os.environ.get("AZURE_OPENAI_ENDPOINT"))
+        self.azure_openai_key = os.getenv("AZURE_OPENAI_KEY", os.environ.get("AZURE_OPENAI_KEY"))
+        self.azure_openai_deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT", os.environ.get("AZURE_OPENAI_DEPLOYMENT"))
+        self.openai_api_version = os.getenv("OPENAI_API_VERSION", os.environ.get("OPENAI_API_VERSION", "2025-01-01-preview"))
         self.embedding_model = os.getenv("EMBEDDING_MODEL", "mrnam-text-embedding-3-small")
         
         # 설정 검증

@@ -1,0 +1,12 @@
+##############
+### sit
+##############
+cmmnfwrk:
+  logging:
+    level: info   # trace, debug, info, warn, error
+    show: true
+
+
+# app
+app-info:
+  title: "[SIT] 기준정보 데몬"
