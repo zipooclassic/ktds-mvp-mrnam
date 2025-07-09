@@ -136,9 +136,10 @@ def validate_code_with_genai(file_path, code_content, relevant_guides):
     [요청 작업]
     1. 파일명, 클래스명, 주요 메소드명 등이 가이드라인을 따르는지 확인하세요.
        파일명, 클래스명에는 CQRS 패턴이 적용된 명명규칙이 있습니다. 
-       조회성은 Qry | 처리성은 Cmd| 접두사를 사용합니다.    
-       API, Contoller, Service, Repository 등은 반드시 명명규칙을 따르도록 합니다.
-       각각 Api, Ctrl, Svc, Repo 등 접미사를 사용합니다.
+       조회성은 Qry | 처리성은 Cmd| 접두사를 사용합니다.  
+       단 Entity, Dto는 CQRS 패턴을 따르지 않습니다.  
+       API, Contoller, Service, Repository, Client 등은 반드시 명명규칙을 따르도록 합니다.
+       각각 Api, Ctrl, Svc, Repo, Clnt 등 접미사를 사용합니다.
        예시: `UserController`는 `UserCtrl`, `OrderService`는 `OrderSvc` 등으로 명명합니다.
     2. 만약 규칙을 위반한 사항이 있다면, 어떤 규칙을 어떻게 위반했는지 명확히 설명해주세요.
     3. 위반 사항을 설명할 때는 반드시 참조한 가이드의 출처(예: '개발가이드 2페이지')를 정확히 언급해주세요.
