@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}코드 검증 & 생성 시스템{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/layout.css') }}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 사이드바 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4 class="sidebar-title">
+                <i class="bi bi-code-slash me-2"></i>
+                <span class="sidebar-title-text">Code AI System</span>
+            </h4>
+            <button class="sidebar-toggle d-lg-none" id="sidebarToggle">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul class="nav-menu">
+               <!-- <li class="nav-item">
+                    <a href="{{ url_for('code_generation') }}" class="nav-link {{ 'active' if request.endpoint == 'code_generation' else '' }}" data-tooltip="Code Generation">
+                        <i class="bi bi-cpu me-2"></i>
+                        <span class="nav-text">Code Generation</span>
+                    </a>
+                </li>-->
+                <li class="nav-item">
+                    <a href="{{ url_for('code_inspection') }}" class="nav-link {{ 'active' if request.endpoint == 'code_inspection' else '' }}" data-tooltip="Code Inspection">
+                        <i class="bi bi-shield-check me-2"></i>
+                        <span class="nav-text">Code Inspection</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <i class="bi bi-person-circle me-2"></i>
+                <span class="nav-text">Developer</span>
+            </div>
+            <div class="sidebar-toggle-container">
+                <button class="sidebar-toggle-bottom" id="desktopSidebarToggle" data-tooltip="메뉴 접기/펼치기">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="main-content">
+        <!-- 헤더 -->
+        <header class="main-header">
+            <div class="header-left">
+                <button class="sidebar-toggle d-lg-none" id="mobileSidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h1 class="page-title">{% block page_title %}대시보드{% endblock %}</h1>
+            </div>
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="btn btn-outline-primary btn-sm" onclick="location.reload()">
+                        <i class="bi bi-arrow-clockwise me-1"></i>새로고침
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 콘텐츠 영역 -->
+        <main class="content-area">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- 사이드바 오버레이 (모바일용) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

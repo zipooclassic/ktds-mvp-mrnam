@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Code Generation - 코드 생성{% endblock %}
+{% block page_title %}Code Generation{% endblock %}
+
+{% block extra_css %}
+<link href="{{ url_for('static', filename='css/code-generation.css') }}" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- 채팅 영역 -->
+        <div class="col-lg-8 col-md-12 mb-4">
+            <div class="card chat-container">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-chat-dots me-2"></i>AI 코드 생성 어시스턴트
+                    </h5>
+                    <div class="header-actions">
+                        <button class="btn btn-sm btn-outline-info" onclick="checkServiceStatus()">
+                            <i class="bi bi-info-circle me-1"></i>서비스 상태
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="clearChat()">
+                            <i class="bi bi-trash me-1"></i>대화 초기화
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- 채팅 메시지 영역 -->
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message assistant-message">
+                            <div class="message-avatar">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <div class="message-header">
+                                    <span class="message-sender">AI Assistant</span>
+                                    <span class="message-time">지금</span>
+                                </div>
+                                <div class="message-text">
+                                    안녕하세요! 저는 AI 코드 생성 어시스턴트입니다.<br>
+                                    어떤 코드를 생성해드릴까요? 다음과 같은 요청을 처리할 수 있습니다:
+                                    <ul class="mt-2 mb-0">
+                                        <li>Spring Boot Controller 생성</li>
+                                        <li>JPA Entity 클래스 생성</li>
+                                        <li>Service 클래스 생성</li>
+                                        <li>Repository 인터페이스 생성</li>
+                                        <li>테스트 코드 생성</li>
+                                        <li>기타 Java 코드 생성</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 입력 영역 -->
+                    <div class="chat-input-area">
+                        <form id="chatForm" class="d-flex">
+                            <div class="input-group">
+                                <textarea 
+                                    class="form-control" 
+                                    id="messageInput" 
+                                    placeholder="코드 생성 요청을 입력하세요... (예: User Entity 클래스를 생성해주세요)"
+                                    rows="1"
+                                    style="resize: none;"
+                                ></textarea>
+                                <button class="btn btn-primary" type="submit" id="sendButton">
+                                    <i class="bi bi-send"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 코드 미리보기 영역 -->
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="card code-preview-container">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-code-slash me-2"></i>생성된 코드
+                    </h5>
+                    <div class="header-actions">
+                        <button class="btn btn-sm btn-outline-primary" onclick="downloadCode()" id="downloadBtn" disabled>
+                            <i class="bi bi-download me-1"></i>다운로드
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="copyCode()" id="copyBtn" disabled>
+                            <i class="bi bi-clipboard me-1"></i>복사
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="code-preview" id="codePreview">
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-code-slash display-1 mb-3"></i>
+                            <p>생성된 코드가 여기에 표시됩니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 빠른 예제 템플릿 -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightning me-2"></i>빠른 예제 템플릿
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-2 mb-3">
+                            <div class="template-card" onclick="useTemplate('entity')">
+                                <div class="template-icon">
+                                    <i class="bi bi-table"></i>
+                                </div>
+                                <div class="template-content">
+                                    <h6>Entity 클래스</h6>
+                                    <p>JPA Entity 클래스 생성</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-2 mb-3">
+                            <div class="template-card" onclick="useTemplate('controller')">
+                                <div class="template-icon">
+                                    <i class="bi bi-server"></i>
+                                </div>
+                                <div class="template-content">
+                                    <h6>Controller 클래스</h6>
+                                    <p>REST Controller 생성</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-2 mb-3">
+                            <div class="template-card" onclick="useTemplate('service')">
+                                <div class="template-icon">
+                                    <i class="bi bi-gear"></i>
+                                </div>
+                                <div class="template-content">
+                                    <h6>Service 클래스</h6>
+                                    <p>비즈니스 로직 Service 생성</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-2 mb-3">
+                            <div class="template-card" onclick="useTemplate('repository')">
+                                <div class="template-icon">
+                                    <i class="bi bi-database"></i>
+                                </div>
+                                <div class="template-content">
+                                    <h6>Repository 인터페이스</h6>
+                                    <p>JPA Repository 생성</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-2 mb-3">
+                            <div class="template-card" onclick="useTemplate('kafka')">
+                                <div class="template-icon">
+                                    <i class="bi bi-arrow-left-right"></i>
+                                </div>
+                                <div class="template-content">
+                                    <h6>Kafka 연동</h6>
+                                    <p>Kafka Producer/Consumer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-2 mb-3">
+                            <div class="template-card" onclick="useTemplate('config')">
+                                <div class="template-icon">
+                                    <i class="bi bi-gear-fill"></i>
+                                </div>
+                                <div class="template-content">
+                                    <h6>Configuration</h6>
+                                    <p>Spring Boot 설정 클래스</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="{{ url_for('static', filename='js/code-generation.js') }}"></script>
+{% endblock %}
