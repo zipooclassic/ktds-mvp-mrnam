@@ -1,31 +1,5 @@
 # ktds-mvp-mrnam
 
-![image.png](static/images/image.png)
-
-## 프로젝트 제목
-
-**"AIDEV-OPS: AI-Driven Development Operations & Quality Assurance Platform"**
-(AI 기반 개발 운영 및 품질보증 통합 플랫폼)
-
-**"AI-SPARTA: Smart Project Architecture & Rapid Technology Assistant"**
-
-(스마트 프로젝트 아키텍처 및 신속 기술 지원 플랫폼)
-
-### 프로젝트 비전
-
-"AI 기반 개발 운영 및 품질보증 통합 플랫폼 기반 지능형 개발 생명주기 관리를 통해 개발 품질 향상과 업무 효율성을 극대화하는 차세대 개발 지원 플랫폼 구축"
-
-### 핵심 가치
-
-- **지속적 학습**: VOC 패턴 / AI-IS 소스코드 / 프로젝트 요구사항 / 개발가이드 / 아키텍처 문서 등
-                 분석을 통한 누적 지식 체계 구축
-- **예방적 품질관리**: 사전 가이드 제공으로 결함 최소화
-- **자동화 중심**: 반복 업무 자동화를 통한 개발자 생산성 향상
-- **표준화 준수**: 일관된 개발 표준 적용으로 코드 품질 보장
-
-
-
-
 ## 1. 코드 품질 모니터링 시스템 개요 및 목적
 
 **목적**:
@@ -118,3 +92,29 @@ SI/SM 프로젝트 개발 및 유지보수 진행 시
 3. KMS 연계를 통한 자동 학습 구현 필요. (Confluence, JIRA, 문서 등)
 4. github action을 통한 코드 품질 분석 Trigger 구현 필요
 5. 분석 결과 SMS/Email 발송 구현 필요
+
+
+## 5. To-Be 방향성
+
+![image.png](static/images/image.png)
+
+## 프로젝트 제목
+
+**"AIDEV-OPS: AI-Driven Development Operations & Quality Assurance Platform"**
+(AI 기반 개발 운영 및 품질보증 통합 플랫폼)
+
+**"AI-SPARTA: Smart Project Architecture & Rapid Technology Assistant"**
+
+(스마트 프로젝트 아키텍처 및 신속 기술 지원 플랫폼)
+
+### 프로젝트 비전
+
+"AI 기반 개발 운영 및 품질보증 통합 플랫폼 기반 지능형 개발 생명주기 관리를 통해 개발 품질 향상과 업무 효율성을 극대화하는 차세대 개발 지원 플랫폼 구축"
+
+### 핵심 가치
+
+- **지속적 학습**: VOC 패턴 / AI-IS 소스코드 / 프로젝트 요구사항 / 개발가이드 / 아키텍처 문서 등
+                 분석을 통한 누적 지식 체계 구축
+- **예방적 품질관리**: 사전 가이드 제공으로 결함 최소화
+- **자동화 중심**: 반복 업무 자동화를 통한 개발자 생산성 향상
+- **표준화 준수**: 일관된 개발 표준 적용으로 코드 품질 보장
