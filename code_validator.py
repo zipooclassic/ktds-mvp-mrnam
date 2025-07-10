@@ -189,7 +189,7 @@ def analyze_file(file_path,cursor):
     # 3. GenAI로 코드 검증
     validation_result = validate_code_with_genai(os.path.basename(file_path), content, guides)
     
-    is_violation = "위반" in validation_result or "따르지 않" in validation_result
+    is_violation = "코드 가이드라인을 모두 준수했습니다." not in validation_result and ("위반" in validation_result or "따르지 않" in validation_result) 
 
     # 3. 위반 상태에 따른 DB 처리
     # 현재 파일에 대해 'open' 상태인 위반이 있는지 확인

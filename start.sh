@@ -70,6 +70,7 @@ pip install typing-extensions==4.14.1
 pip install typing-inspection==0.4.1
 pip install urllib3==2.5.0
 pip install werkzeug==3.1.3
+pip install openpyxl
 
 
 python app.py

@@ -147,6 +147,9 @@ body {
     background: white;
     animation: slideInUp 0.6s ease-out;
     margin-bottom: 1.5rem;
+    height: 200px; /* 고정 높이 설정 */
+    display: flex;
+    flex-direction: column;
 }
 
 .kpi-card::before {
@@ -220,6 +223,11 @@ body {
     text-align: center;
     position: relative;
     z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .kpi-icon {
@@ -303,10 +311,6 @@ body {
 .kpi-card:hover {
     transform: translateY(-8px);
     box-shadow: var(--shadow-large);
-}
-
-.kpi-card .card-body {
-    padding: 1.5rem;
 }
 
 .kpi-card .card-title {
@@ -399,6 +403,9 @@ body {
     padding: 2rem;
     position: relative;
     z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 /* 차트 카드 스타일 */
@@ -410,6 +417,9 @@ body {
     overflow: hidden;
     background: white;
     transition: all 0.3s ease;
+    min-height: 400px; /* 최소 높이 설정 */
+    display: flex;
+    flex-direction: column;
 }
 
 .chart-card:hover {
@@ -856,6 +866,13 @@ body {
     color: white;
 }
 
+/* 최근 활동 카드 스타일 */
+.activity-card {
+    min-height: 500px; /* 최소 높이 설정 */
+    display: flex;
+    flex-direction: column;
+}
+
 /* 최근 활동 테이블 스타일 */
 .activity-card .table {
     margin-bottom: 0;
@@ -1021,4 +1038,413 @@ body {
 
 .modal.show .modal-dialog {
     transform: translateY(0);
+}
+
+/* 위반사항 다운로드 카드 스타일 */
+.violation-download-card {
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.violation-download-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-left: 30px solid transparent;
+    border-top: 30px solid rgba(255, 255, 255, 0.2);
+    transition: var(--transition-smooth);
+}
+
+.violation-download-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--shadow-large);
+}
+
+.violation-download-card:hover::before {
+    border-left: 40px solid transparent;
+    border-top: 40px solid rgba(255, 255, 255, 0.3);
+}
+
+.violation-download-card:active {
+    transform: translateY(-8px) scale(1.01);
+}
+
+.violation-download-card .card-body {
+    position: relative;
+    z-index: 1;
+}
+
+.violation-download-card .kpi-icon {
+    transition: var(--transition-bounce);
+}
+
+.violation-download-card:hover .kpi-icon {
+    transform: scale(1.2) rotate(-10deg);
+}
+
+/* 다운로드 텍스트 스타일 */
+.violation-download-card .text-muted {
+    opacity: 0.8;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: var(--transition-smooth);
+}
+
+.violation-download-card:hover .text-muted {
+    opacity: 1;
+    color: #fff !important;
+}
+
+/* 활동 히스토리 스크롤 페이징 스타일 */
+.activity-table-container {
+    border-radius: var(--border-radius-md);
+    border: 1px solid #dee2e6;
+}
+
+.activity-table-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.activity-table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.activity-table-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+}
+
+.activity-table-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+/* 로딩 인디케이터 스타일 */
+#loadingIndicator {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-top: 1px solid #dee2e6;
+    animation: fadeIn 0.3s ease;
+}
+
+#noMoreData {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    border-top: 1px solid #dee2e6;
+}
+
+/* Sticky 헤더 개선 */
+.activity-card .table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 새로 추가되는 행에 대한 애니메이션 */
+@keyframes slideInFromBottom {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.activity-table-container tbody tr:last-child {
+    animation: slideInFromBottom 0.3s ease;
+}
+
+/* 활동 카드 헤더 개선 */
+.activity-card .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.activity-card .card-header h5 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.activity-card .card-header small {
+    opacity: 0.7;
+    font-style: italic;
+}
+
+/* 위반 파일 버튼 스타일 */
+.violation-file-btn {
+    transition: var(--transition-smooth);
+    border-radius: var(--border-radius-sm);
+    padding: 0.25rem 0.5rem !important;
+    width: 100%;
+    text-align: left !important;
+}
+
+.violation-file-btn:hover {
+    background-color: rgba(102, 126, 234, 0.1) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+}
+
+.violation-file-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.25);
+}
+
+.violation-file-btn .bi-eye-fill {
+    opacity: 0;
+    transition: var(--transition-smooth);
+}
+
+.violation-file-btn:hover .bi-eye-fill {
+    opacity: 1;
+}
+
+/* 위반 상세 테이블 스타일 개선 */
+.table-responsive .table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-responsive .table tbody tr {
+    transition: var(--transition-smooth);
+}
+
+.table-responsive .table tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.05) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+}
+
+/* 활동 상세 모달 스타일 개선 */
+#activityDetailModal .modal-dialog {
+    max-width: 95vw !important;
+    width: 95vw !important;
+    margin: 1rem auto;
+}
+
+#activityDetailModal .modal-body {
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+#activityDetailModal .text-break {
+    word-break: break-all !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    line-height: 1.6;
+}
+
+#activityDetailModal code {
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+    display: block !important;
+    background-color: #f8f9fa !important;
+    padding: 0.75rem !important;
+    border-radius: 0.375rem !important;
+    border: 1px solid #e9ecef !important;
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+}
+
+#activityDetailModal pre {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    max-width: 100% !important;
+    background-color: #f8f9fa !important;
+    padding: 1rem !important;
+    border-radius: 0.375rem !important;
+    border: 1px solid #e9ecef !important;
+    line-height: 1.5 !important;
+    overflow-x: auto !important;
+}
+
+/* 파일 경로 전용 스타일 */
+#activityDetailModal .file-path {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+    font-size: 0.85rem !important;
+    word-break: break-all !important;
+    overflow-wrap: anywhere !important;
+    line-height: 1.4 !important;
+    background-color: #f8f9fa !important;
+    padding: 0.75rem !important;
+    border-radius: 0.375rem !important;
+    border: 1px solid #dee2e6 !important;
+    color: #495057 !important;
+    white-space: pre-wrap !important;
+    max-height: 150px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    hyphens: auto !important;
+    word-wrap: break-word !important;
+}
+
+/* 긴 경로를 위한 추가 스타일 */
+#activityDetailModal .file-path::-webkit-scrollbar {
+    width: 6px;
+}
+
+#activityDetailModal .file-path::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#activityDetailModal .file-path::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+#activityDetailModal .file-path::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 파일 경로 카드 스타일 */
+#activityDetailModal .card.bg-light {
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    margin-bottom: 1rem;
+}
+
+#activityDetailModal .card-body {
+    padding: 1rem;
+}
+
+#activityDetailModal .card-body code {
+    background-color: #ffffff !important;
+    border: 1px solid #e9ecef;
+    color: #495057;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+/* 테이블 스타일 개선 */
+#activityDetailModal .table-borderless td {
+    border: none !important;
+    padding: 0.5rem 0.75rem;
+    vertical-align: top;
+    line-height: 1.5;
+}
+
+#activityDetailModal .table-borderless td:first-child {
+    font-weight: 600;
+    color: #495057;
+    width: 25%;
+    min-width: 120px;
+}
+
+#activityDetailModal .table-borderless td:last-child {
+    width: 75%;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    #activityDetailModal .modal-dialog {
+        max-width: 98vw !important;
+        width: 98vw !important;
+        margin: 0.5rem auto;
+    }
+    
+    #activityDetailModal .modal-body {
+        padding: 1rem;
+        max-height: 90vh;
+    }
+    
+    #activityDetailModal .col-md-6 {
+        margin-bottom: 1rem;
+    }
+    
+    #activityDetailModal .table-borderless td:first-child {
+        width: 30%;
+        min-width: 100px;
+        font-size: 0.875rem;
+    }
+    
+    #activityDetailModal .table-borderless td:last-child {
+        width: 70%;
+        font-size: 0.875rem;
+    }
+    
+    #activityDetailModal .file-path {
+        font-size: 0.75rem !important;
+        padding: 0.5rem !important;
+        max-height: 120px !important;
+    }
+    
+    #activityDetailModal code,
+    #activityDetailModal pre {
+        font-size: 0.75rem !important;
+        padding: 0.5rem !important;
+    }
+}
+
+/* 차트 모달 스타일 개선 */
+#chartModal .modal-dialog {
+    max-width: 90vw !important;
+    width: 90vw !important;
+}
+
+#chartModal .modal-body {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+#chartModal .table-responsive {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+#chartModal .table td {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+#chartModal .font-monospace {
+    word-break: break-all !important;
+    white-space: pre-wrap !important;
+}
+
+#chartModal .text-wrap {
+    word-break: break-word !important;
+    white-space: pre-wrap !important;
+    max-width: 100% !important;
+}
+
+/* 위반 파일 버튼 텍스트 정렬 개선 */
+#chartModal .violation-file-btn {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#chartModal .violation-file-btn:hover {
+    white-space: normal !important;
+    word-break: break-all !important;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    #chartModal .modal-dialog {
+        max-width: 95vw !important;
+        width: 95vw !important;
+        margin: 1rem auto;
+    }
+    
+    #chartModal .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    #chartModal .col-md-3 {
+        margin-bottom: 1rem;
+    }
 }

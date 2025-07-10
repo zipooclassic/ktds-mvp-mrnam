@@ -45,11 +45,14 @@
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card kpi-card danger">
+                <div class="card kpi-card danger violation-download-card" onclick="downloadViolationsExcel()" style="cursor: pointer;" title="클릭하여 엑셀 다운로드">
                     <div class="card-body">
                         <i class="bi bi-exclamation-triangle-fill kpi-icon"></i>
                         <h5 class="card-title">총 위반 사항</h5>
                         <p class="kpi-value text-danger">{{ stats.total_violations }}</p>
+                        <small class="text-muted mt-2 d-block">
+                            <i class="bi bi-download me-1"></i>클릭하여 엑셀 다운로드
+                        </small>
                     </div>
                 </div>
             </div>
@@ -126,11 +129,12 @@
                 <div class="card activity-card">
                     <div class="card-header">
                         <h5><i class="bi bi-clock-history me-2"></i>최근 활동</h5>
+                        <small class="text-muted">스크롤하여 더 많은 활동을 확인하세요</small>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead class="table-dark">
+                    <div class="card-body p-0">
+                        <div class="activity-table-container" id="activityTableContainer" style="max-height: 500px; overflow-y: auto;">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead class="table-dark sticky-top">
                                     <tr>
                                         <th style="width: 8%;">상태</th>
                                         <th style="width: 15%;">일시</th>
@@ -140,7 +144,7 @@
                                         <th style="width: 30%;">상세 내용</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="activityTableBody">
                                     {% for log in history %}
                                     <tr>
                                         <td>
@@ -177,14 +181,14 @@
                                                 {% if log.details and log.details|length > 60 %}
                                                 <div class="details-preview">
                                                     <small>{{ log.details[:60] }}...</small>
-                                                    <button class="btn btn-link btn-sm p-0 ms-1" onclick="showActivityDetailModal({{ loop.index0 }})" title="자세히 보기">
+                                                    <button class="btn btn-link btn-sm p-0 ms-1 activity-detail-btn" data-activity-index="{{ loop.index0 }}" title="자세히 보기">
                                                         <i class="bi bi-eye"></i>
                                                     </button>
                                                 </div>
                                                 {% else %}
                                                 <small>{{ log.details or 'N/A' }}</small>
                                                 {% if log.details %}
-                                                <button class="btn btn-link btn-sm p-0 ms-1" onclick="showActivityDetailModal({{ loop.index0 }})" title="자세히 보기">
+                                                <button class="btn btn-link btn-sm p-0 ms-1 activity-detail-btn" data-activity-index="{{ loop.index0 }}" title="자세히 보기">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
                                                 {% endif %}
@@ -202,6 +206,18 @@
                                     {% endif %}
                                 </tbody>
                             </table>
+                            <!-- 로딩 인디케이터 -->
+                            <div id="loadingIndicator" class="text-center p-3" style="display: none;">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <small class="text-muted ms-2">더 많은 활동을 불러오는 중...</small>
+                            </div>
+                            <!-- 더 이상 데이터가 없을 때 -->
+                            <div id="noMoreData" class="text-center p-3 text-muted" style="display: none;">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <small>모든 활동을 불러왔습니다.</small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -219,9 +235,9 @@
         </div>
     </div>
 
-    <!-- 모달 -->
+    <!-- 차트 모달 -->
     <div class="modal fade" id="chartModal" tabindex="-1" aria-labelledby="chartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="chartModalLabel">상세 정보</h5>
@@ -231,6 +247,21 @@
                     <div id="modalContent">
                         <!-- 동적 내용이 여기에 추가됩니다 -->
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 활동 상세 모달 -->
+    <div class="modal fade" id="activityDetailModal" tabindex="-1" aria-labelledby="activityDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="activityDetailModalLabel">활동 상세 정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- 동적 내용이 여기에 추가됩니다 -->
                 </div>
             </div>
         </div>
@@ -282,75 +313,6 @@
                 preview.style.display = 'none';
                 full.style.display = 'block';
             }
-        }
-        
-        // 활동 상세 정보 모달 표시 함수
-        function showActivityDetailModal(index) {
-            if (!window.activityData || !window.activityData[index]) {
-                console.error('Activity data not found for index:', index);
-                return;
-            }
-            
-            const activity = window.activityData[index];
-            const modal = document.getElementById('chartModal');
-            const modalTitle = document.getElementById('chartModalLabel');
-            const modalBody = document.getElementById('modalContent');
-            
-            if (!modal || !modalTitle || !modalBody) {
-                console.error('Modal elements not found');
-                return;
-            }
-            
-            // 모달 제목 설정
-            modalTitle.textContent = activity.status === 'open' ? '새로운 이슈 상세 정보' : '해결된 이슈 상세 정보';
-            
-            // 모달 내용 구성
-            const statusBadge = activity.status === 'open' 
-                ? '<span class="badge bg-danger"><i class="bi bi-exclamation-triangle me-1"></i>이슈</span>'
-                : '<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>해결</span>';
-            
-            const timestamp = new Date(activity.timestamp).toLocaleString('ko-KR');
-            
-            modalBody.innerHTML = `
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6 class="mb-0">
-                                    <i class="bi bi-file-text me-2"></i>상세 내용
-                                    <span class="ms-3">${statusBadge}</span>
-                                    <small class="text-muted ms-2">${timestamp}</small>
-                                </h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <small class="text-muted">파일:</small>
-                                            <div><code class="bg-light p-1 rounded">${activity.file_path || 'N/A'}</code></div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <small class="text-muted">작성자:</small>
-                                            <div><strong>${activity.author || 'N/A'}</strong></div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <small class="text-muted">커밋:</small>
-                                            <div><code class="bg-light p-1 rounded">${activity.commit_hash ? activity.commit_hash.substring(0, 8) : 'N/A'}</code></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="details-content" style="max-height: 400px; overflow-y: auto;">
-                                    <pre class="bg-light p-3 rounded" style="white-space: pre-wrap; word-wrap: break-word;">${activity.details || 'N/A'}</pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            // Bootstrap Modal 표시
-            const bsModal = new bootstrap.Modal(modal);
-            bsModal.show();
         }
     </script>
     <script src="{{ url_for('static', filename='js/dashboard_with_modal.js') }}"></script>
